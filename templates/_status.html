@@ -24,11 +24,13 @@
                     <h3 class="panel-title">
                     <div class="integ-number textgrey pull-left">integ {{vm.idVm}}</div>
                     <div class="integ-name edit pull-left" id="{{vm.idVm}}">{% if vm.comment is empty %}Comment here{% else %}{{vm.comment}}{% endif %}</div>
-                    {% if vm.status == 0 %}
-                    <a href="{% if vm.status == 0 %}http://status.integ{{vm.integ}}{% endif %}" class="label flatblue pull-right">{{la_fourchette_prototype_vm_status(vm.status)}}</a>
+
+                    <a href="{% if vm.status == 0 %}http://status.integ{{vm.integ}}{% endif %}" class="label flatblue pull-right">
+                        {{la_fourchette_prototype_vm_status(vm.status)}}
+                    </a>
                     <!-- TODO : conditions for status colors (running=flatblue, free=flatgreen, building=flatpurple) -->
                     </h3>
-                    {% endif %}
+
                 </header>
                 <article id="panel-001" class="panel-body nopl nopr">
                     <section class="row">
@@ -44,15 +46,30 @@
                     </section>
                     <section class="row m_t">
                         <article class="col-lg-6 col-md-6 nopl">
-                            <a href="#" class="btn btn-default"><i class="fa fa-info-circle"></i></a>
-                            <a href="#" class="btn btn-default"><i class="fa fa-clock-o"></i></a>
-                            <a href="#" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>
+                            {% if app.session.get('user').username == vm.createdBy.username %}
+                                {% if vm.status != 4 %}
+                                    <a href="/force-expire-prototype/{{ vm.idVm }}" class="btn btn-danger">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                {% endif %}
+                                {% if vm.status != -1 and vm.status != 5 %}
+                                    <a href="/ask-more-prototype/{{ vm.idVm }}" class="btn btn-default">
+                                        <i class="fa fa-clock-o"></i>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                            {% if app.session.get('user').username == vm.createdBy.username and vm.status != -1 %}
+                                <a href="/show-prototype/{{ vm.idVm }}" class="btn btn-default">
+                                    <i class="fa fa-info-circle"></i>
+                                </a>
+                            {% endif %}
                         </article>
-                        <a data-toggle="collapse" href="#more-001" class="col-lg-6 col-md-6 lh text-right nopr">
+
+                        <a data-toggle="collapse" href="#more-{{vm.idVm}}" class="col-lg-6 col-md-6 lh text-right nopr">
                             <i class="fa fa-plus-square"></i>
                             See more
                         </a>
-                        <section id="more-001" class="collapse">
+                        <section id="more-{{vm.idVm}}" class="collapse">
                                 <table class="table">
                                     <tr>
                                         <td>ID</td>
